@@ -71,3 +71,5 @@ const updateEmployeeRole = [
         choices: [],
     }
 ]
+
+module.exports = {menuQuestion, addDepartment, addRole, addEmployee, updateEmployeeRole};
