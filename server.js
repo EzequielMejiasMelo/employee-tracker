@@ -9,7 +9,7 @@ async function init() {
         password: '',
         database: 'company_db',
     });
-    
+
     let quitApp = false;
 
     while (!quitApp) {
@@ -24,8 +24,10 @@ async function init() {
             if(additions.task === 'Add Employee'){};
             if(additions.task === 'Update Employee Role'){};
         }
-        if (additions.task === 'Quit'){ quitApp = true};
-    }
+
+        if (additions.task === 'Quit'){quitApp = true};
+    };
+    
     db.end();
     return;
 }
