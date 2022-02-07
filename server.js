@@ -16,13 +16,13 @@ async function init() {
         const additions = await inquirer.prompt(menuQuestion);
 
         if (additions.task !== 'Quit'){
-            if(additions.task === 'View All Departments'){};
-            if(additions.task === 'View All Roles'){};
-            if(additions.task === 'View All Employees'){};
-            if(additions.task === 'Add Department'){};
-            if(additions.task === 'Add Role'){};
-            if(additions.task === 'Add Employee'){};
-            if(additions.task === 'Update Employee Role'){};
+            if(additions.task === 'View All Departments'){viewTables('departments')};
+            if(additions.task === 'View All Roles'){viewTables('roles')};
+            if(additions.task === 'View All Employees'){viewTables('employees')};
+            if(additions.task === 'Add Department'){departmentAdd()};
+            if(additions.task === 'Add Role'){roleAdd()};
+            if(additions.task === 'Add Employee'){employeeAdd()};
+            if(additions.task === 'Update Employee Role'){employeeUpdate()};
         }
 
         if (additions.task === 'Quit'){quitApp = true};
@@ -30,6 +30,18 @@ async function init() {
     
     db.end();
     return;
+}
+
+async function viewTables(table) {
+    const sql = 'SELECT * FROM (?)';
+    
+    db.query(sql, table, (err, result) => {
+        if (err){
+            console.log(err);
+            return;
+        }
+        console.table(result);
+    })
 }
 
 async function departmentAdd() {
