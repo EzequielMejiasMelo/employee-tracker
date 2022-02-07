@@ -1,3 +1,30 @@
+const mysql = require("mysql2");
+
+const db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'root',
+    database: 'company_db',
+});
+
+async function getManagers(){
+    let manager_ids = await db.promise().query('SELECT manager_id FROM employees WHERE manager_id IS NOT NULL');
+    manager_ids = manager_ids[0];
+
+    let managers = [];
+    for (let i=0; i < manager_ids.length; i++){
+        let manager = await db.promise().query(`SELECT first_name, last_name FROM employees WHERE manager_id=${manager_ids[i].manager_id}`);
+        manager = manager[0];
+        let name = `${manager[0].first_name} ${manager[0].last_name}`;
+        managers.push(name);
+    }
+    return managers;
+}
+
+async function getRoles() {
+
+}
+
 const menuQuestion = [
     {
         type: 'list',
@@ -24,7 +51,7 @@ const addRole = [
     {
         type: 'number',
         name: 'roleSalary',
-        message: 'What is the salaray for the role?',
+        message: 'What is the salary for the role?',
     },
     {
         type: 'input',
@@ -48,12 +75,13 @@ const  addEmployee = [
         type: 'input',
         name: 'employeeRole',
         message: "What is the employee's role?",
+        choices: [],
     },
     {
         type: 'list',
         name: 'employeeManager',
         message: "Who is the employee's manager?",
-        choices: [],
+        choices: getManagers(),
     }
 ]
 
