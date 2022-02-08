@@ -7,22 +7,40 @@ const db = mysql.createConnection({
     database: 'company_db',
 });
 
-async function getManagers(){
-    let manager_ids = await db.promise().query('SELECT manager_id FROM employees WHERE manager_id IS NOT NULL');
-    manager_ids = manager_ids[0];
+async function getEmployees(){
+    let employee_obj = await db.promise().query('SELECT first_name, last_name FROM employees');
+    employee_obj = employee_obj[0];
 
-    let managers = [];
-    for (let i=0; i < manager_ids.length; i++){
-        let manager = await db.promise().query(`SELECT first_name, last_name FROM employees WHERE manager_id=${manager_ids[i].manager_id}`);
-        manager = manager[0];
-        let name = `${manager[0].first_name} ${manager[0].last_name}`;
-        managers.push(name);
+    let employees = [];
+    for (let i=0; i < employee_obj.length; i++){
+        let name = `${employee_obj[i].first_name} ${employee_obj[i].last_name}`;
+        employees.push(name);
     }
-    return managers;
+    return employees;
 }
 
 async function getRoles() {
+    let roles_obj =  await db.promise().query('SELECT title FROM roles');
+    roles_obj = roles_obj[0];
 
+    let roles = [];
+    for (let i=0; i<roles_obj.length; i++){
+        let role = `${roles_obj[i].title}`;
+        roles.push(role);
+    }
+    return roles;
+}
+
+async function getDepartments() {
+    let department_obj = await db.promise().query('SELECT department_name FROM departments');
+    department_obj = department_obj[0];
+
+    let departments = [];
+    for (let i=0; i<department_obj.length; i++){
+        let department = `${department_obj[i].department_name}`;
+        departments.push(department);
+    }
+    return departments;
 }
 
 const menuQuestion = [
@@ -54,9 +72,10 @@ const addRole = [
         message: 'What is the salary for the role?',
     },
     {
-        type: 'input',
+        type: 'list',
         name: 'roleDepartment',
         message: 'Which department does this role belong to?',
+        choices: [],
     }
 ]
 
@@ -72,16 +91,16 @@ const  addEmployee = [
         message: "What is the employee's last name?",
     },
     {
-        type: 'input',
+        type: 'list',
         name: 'employeeRole',
         message: "What is the employee's role?",
-        choices: [],
+        choices: getRoles(),
     },
     {
         type: 'list',
         name: 'employeeManager',
         message: "Who is the employee's manager?",
-        choices: getManagers(),
+        choices: getEmployees(),
     }
 ]
 
@@ -90,13 +109,13 @@ const updateEmployeeRole = [
         type: 'list',
         name: 'updateEmployee',
         message: "Which employee's role do you want to update?",
-        choices: [],
+        choices: getEmployees(),
     },
     {
         type: 'list',
         name: 'updateRole',
         message: "Which role would you like to assign the selected employee?",
-        choices: [],
+        choices: getRoles(),
     }
 ]
 
